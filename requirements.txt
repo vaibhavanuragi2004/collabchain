@@ -1,0 +1,8 @@
+django 
+djangorestframework 
+djangorestframework-simplejwt 
+twilio 
+python-dotenv
+django-cors-headers
+Pillow
+razorpay
