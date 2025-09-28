@@ -1,0 +1,33 @@
+<!-- templates/accounts/snippets/subscription_status.html -->
+
+<li class="nav-item mt-auto">
+    <hr class="text-white">
+    <div class="px-3 py-2 text-white">
+        <small class="text-muted">Subscription Status</small>
+        
+        {% if request.user.subscription_plan == 'paid' %}
+            <p class="mb-0">
+                <span class="badge bg-success">Paid Member</span>
+            </p>
+            <small class="text-muted">Expires: {{ request.user.subscription_end_date|date:"d M Y" }}</small>
+        
+        {% elif request.trial_days_remaining is not None %}
+            <p class="mb-0">
+                <span class="badge bg-warning text-dark">Trial Period</span>
+            </p>
+            <small class="text-muted">{{ request.trial_days_remaining }} day{{ request.trial_days_remaining|pluralize }} remaining</small>
+        
+        {% else %}
+            <p class="mb-0">
+                <span class="badge bg-danger">Trial Expired</span>
+            </p>
+        {% endif %}
+        
+        {% if request.user.subscription_plan == 'trial' %}
+            <div class="d-grid mt-2">
+                <a href="{% url 'subscribe' %}" class="btn btn-primary btn-sm">Subscribe Now</a>
+            </div>
+        {% endif %}
+    </div>
+    <hr class="text-white">
+</li>

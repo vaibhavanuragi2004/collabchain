@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Discover Products{% endblock %}
+
+{% block content %}
+<div class="row g-0">
+    <!-- Sidebar -->
+    <nav class="col-md-2 d-md-block bg-dark sidebar vh-100 p-3">
+        <h4 class="text-white mb-4">Buyer Menu</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-white active" href="{% url 'buyer_dashboard' %}">
+                    <i class="bi bi-shop me-2"></i> Discover Products
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#"> <!-- Link is static for now -->
+                    <i class="bi bi-heart me-2"></i> Wishlist
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'my_orders' %}">
+                    <i class="bi bi-receipt me-2"></i> My Orders
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <hr class="text-white">
+                <a class="nav-link text-danger" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-10 p-4">
+        <h1 class="mb-4">Search and Discover Products</h1>
+
+        <!-- Search and Filter Form -->
+        <div class="card bg-dark-subtle mb-4">
+            <div class="card-body">
+                <form method="get" action="{% url 'buyer_dashboard' %}" class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <input type="text" name="q" class="form-control" placeholder="Search by product name..." value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for value, label in categories %}
+                                <option value="{{ value }}" {% if value == selected_category %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center bg-secondary text-white card-img-top" style="height: 200px;"><span>No Image</span></div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text"><span class="badge bg-secondary">{{ product.get_category_display }}</span></p>
+                        <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
+                        <h6 class="card-subtitle mb-2">Price: ${{ product.price }}</h6>
+                        <p class="card-text"><strong>In Stock:</strong> {{ product.stock_quantity }}</p>
+                        <p class="small text-muted">Seller: {{ product.seller.company_name|default:product.seller.username }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <form method="post" action="{% url 'place_order' %}" class="d-flex gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="number" name="quantity" class="form-control form-control-sm" placeholder="Qty" required min="1" max="{{ product.stock_quantity }}">
+                            <button type="submit" class="btn btn-sm btn-success">Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center">No products found matching your criteria.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

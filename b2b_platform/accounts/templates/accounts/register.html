@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Register - Supply Chain Platform{% endblock %}
+
+{% block content %}
+<div class="form-container card">
+    <div class="card-body">
+        <h2 class="card-title text-center mb-4">Create Your Account</h2>
+        <p class="text-center text-muted mb-4">Join as a Buyer, Supplier, or Logistics Provider.</p>
+
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            <!-- Renders any non-field errors from the form (e.g., "passwords do not match") -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        <p class="mb-0">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- 
+              This loop automatically and correctly renders every field 
+              defined in your UserRegistrationForm's Meta class.
+              This includes firm_name, email, contact_no, role, etc.
+            -->
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</h-label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary">Register and Send OTP</button>
+            </div>
+        </form>
+        <p class="text-center mt-3">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

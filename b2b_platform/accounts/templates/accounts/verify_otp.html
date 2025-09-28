@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Verify Your Account{% endblock %}
+
+{% block content %}
+<div class="form-container card">
+    <div class="card-body">
+        <h2 class="card-title text-center mb-3">Verify Your Phone Number</h2>
+        <p class="text-center text-muted mb-4">
+            An OTP has been sent to <strong>{{ contact_no }}</strong>. Please enter it below.
+        </p>
+
+        <form method="post" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="otp" class="form-label">Enter 6-Digit OTP</label>
+                <input type="text" class="form-control form-control-lg text-center" id="otp" name="otp" 
+                       required maxlength="6" pattern="\d{6}" title="Please enter a 6-digit number."
+                       inputmode="numeric">
+            </div>
+            
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary">Verify and Activate</button>
+            </div>
+        </form>
+
+        <p class="text-center mt-3 small">
+            Didn't receive the code? <a href="{% url 'register' %}">Go back and check your number</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

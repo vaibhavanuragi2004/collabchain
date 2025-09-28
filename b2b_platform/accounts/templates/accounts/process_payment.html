@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Payment{% endblock %}
+
+{% block content %}
+<div class="form-container card">
+    <div class="card-body">
+        <h2 class="card-title text-center mb-4">Confirm Your Payment</h2>
+        
+        <div class="alert alert-info">
+            <h5 class="alert-heading">Order Summary</h5>
+            <hr>
+            <p><strong>Product:</strong> {{ order.product.name }}</p>
+            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+            <p><strong>Price per item:</strong> ${{ order.product.price|floatformat:2 }}</p>
+            <hr>
+            <p class="h4"><strong>Total Amount: ${{ total_price|floatformat:2 }}</strong></p>
+        </div>
+
+        <p class="text-center text-muted small">This is a prototype. No real payment will be processed.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Confirm Mock Payment</button>
+                <a href="{% url 'my_orders' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

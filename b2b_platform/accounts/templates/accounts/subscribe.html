@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Subscribe to B2B-Nexus{% endblock %}
+
+{% block content %}
+<div class="form-container card">
+    <div class="card-body text-center">
+        <h2 class="card-title mb-3">Your Trial Has Expired</h2>
+        <p class="text-muted mb-4">Subscribe now to continue accessing all platform features.</p>
+
+        <div class="card bg-dark-subtle mb-4">
+            <div class="card-body">
+                <h5 class="card-title">1 Year Full Access</h5>
+                <p class="card-text">Access to all buyer, seller, and logistics features.</p>
+                <p class="display-4">₹1000</p>
+            </div>
+        </div>
+        
+        <div class="d-grid">
+            <button id="rzp-button1" class="btn btn-primary btn-lg">Pay with Razorpay</button>
+        </div>
+    </div>
+</div>
+
+<!-- This script talks to Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key_id }}",
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "B2B-Nexus Platform",
+    "description": "1-Year Subscription",
+    "order_id": "{{ razorpay_order_id }}",
+    "handler": function (response){
+        // This function is called after a successful payment.
+        // It creates a hidden form and submits the payment details to your verification view.
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'payment_verify' %}"; // The URL for your verification view
+
+        // Add CSRF token
+        var csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        form.appendChild(csrfToken);
+
+        // Add all response parameters from Razorpay to the form
+        for (var key in response) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = response[key];
+            form.appendChild(input);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    },
+    "prefill": {
+        "name": "{{ firm_name }}",
+        "email": "{{ email }}",
+        "contact": "{{ contact_no }}"
+    },
+    "notes": {
+        "address": "B2B-Nexus Corporate"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+{% endblock %}

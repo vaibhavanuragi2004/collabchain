@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}B2B Platform{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #212529; }
+        .form-container { max-width: 500px; margin: 50px auto; padding: 20px; }
+    </style>
+</head>
+
+<body>
+
+    <!-- TRIAL STATUS BANNER (Sits at the very top) -->
+    {% if request.user.is_authenticated and request.trial_days_remaining is not None %}
+    <div class="alert alert-warning text-center mb-0 border-0 rounded-0" role="alert">
+        <strong>Trial Period:</strong> You have <strong>{{ request.trial_days_remaining }} day{{ request.trial_days_remaining|pluralize }}</strong> remaining.
+        <a href="{% url 'subscribe' %}" class="btn btn-primary btn-sm ms-3">Subscribe Now</a>
+    </div>
+    {% endif %}
+
+    <!-- FLASH MESSAGE DISPLAY (Appears in the top-right corner) -->
+    {% if messages %}
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- FULL-WIDTH CONTENT BLOCK (For things like the recommendation carousel) -->
+    {% block full_width_content %}{% endblock full_width_content %}
+
+    <!-- MAIN CONTENT BLOCK (For sidebar layouts and primary page content) -->
+    <div class="container-fluid">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
